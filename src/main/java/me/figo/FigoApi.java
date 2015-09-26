@@ -23,6 +23,8 @@
  */
 package me.figo;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +38,8 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
+import me.figo.internal.FigoRequest;
 import me.figo.internal.FigoTrustManager;
 import me.figo.internal.GsonAdapter;
 
@@ -57,43 +61,21 @@ public class FigoApi {
     
     /**
      * Helper method for making a OAuth2-compliant API call
-     * 
-     * @param path
-     *            path on the server to call
-     * @param data
-     *            Payload of the request
-     * @param method
-     *            the HTTP verb to use
-     * @param typeOfT
-     *            Type of expected response
      * @param <T>
      *            Type of expected response
-     * @return the parsed result of the request
-     */
-    public <T> T queryApi(String path, Object data, String method, Type typeOfT) throws IOException, FigoError {
-        URL url = new URL(apiEndpoint + path);
-
-        // configure URL connection, i.e. the HTTP request
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(timeout);
-        connection.setReadTimeout(timeout);
-        
-        setupTrustManager(connection);
-
-        connection.setRequestMethod(method);
-        connection.setRequestProperty("Authorization", authorization);
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/json");
-
-        // add payload
-        if (data != null) {
-            String encodedData = createGson().toJson(data);
-
-            connection.setDoOutput(true);
-            connection.getOutputStream().write(encodedData.getBytes(Charset.forName("UTF-8")));
-        }
-
-        return processResponse(connection, typeOfT);
+     * @param clazz
+     *            Class of expected response
+     * @param path
+*            path on the server to call
+     * @param data
+*            Payload of the request
+     * @param method
+*            the HTTP verb to use
+     * @param clazz
+     * @param listener
+     * @param errorListener   @return the parsed result of the request                               */
+    public <T> void queryApi(String path, Object data, int method, Class<T> clazz, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+        FigoRequest request = new FigoRequest<T>(method, apiEndpoint, path, authorization, data, clazz, listener, errorListener);
     }
 
     /**

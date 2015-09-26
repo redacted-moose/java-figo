@@ -33,6 +33,9 @@ import me.figo.internal.TokenRequest;
 import me.figo.internal.TokenResponse;
 import android.util.Base64;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+
 /**
  * Representing a not user-bound connection to the figo connect API. Its main purpose is to let user login via the OAuth2 API.
  *
@@ -131,12 +134,12 @@ public class FigoConnection extends FigoApi {
      *         FigoSession and access the users data - `refresh_token` - if the scope contained the `offline` flag, also a refresh token is generated. It can be
      *         used to generate new access tokens, when the first one has expired. - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse convertAuthenticationCode(String authenticationCode) throws FigoError, IOException {
+    public void convertAuthenticationCode(String authenticationCode, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
         if (!authenticationCode.startsWith("O")) {
-            throw new FigoError("invalid_code", "Invalid authentication code");
+            errorListener.onErrorResponse(new FigoError("invalid_code", "Invalid authentication code"));
         }
 
-        return this.queryApi("/auth/token", new TokenRequest(null, authenticationCode, this.redirectUri, "authorization_code"), "POST", TokenResponse.class);
+        this.queryApi("/auth/token", new TokenRequest(null, authenticationCode, this.redirectUri, "authorization_code"), Request.Method.POST, TokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -147,12 +150,12 @@ public class FigoConnection extends FigoApi {
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
      *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse convertRefreshToken(String refreshToken) throws IOException, FigoError {
+    public void convertRefreshToken(String refreshToken, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
         if (!refreshToken.startsWith("R")) {
-            throw new FigoError("invalid_code", "Invalid authentication code");
+            errorListener.onErrorResponse(new FigoError("invalid_code", "Invalid authentication code"));
         }
 
-        return this.queryApi("/auth/token", new TokenRequest(refreshToken, null, this.redirectUri, "refresh_token"), "POST", TokenResponse.class);
+        this.queryApi("/auth/token", new TokenRequest(refreshToken, null, this.redirectUri, "refresh_token"), Request.Method.POST, TokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -164,8 +167,8 @@ public class FigoConnection extends FigoApi {
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
      *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse credentialLogin(String username, String password) throws IOException, FigoError {
-    	return this.queryApi("/auth/token", new CredentialLoginRequest(username, password), "POST", TokenResponse.class);
+    public void credentialLogin(String username, String password, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
+    	this.queryApi("/auth/token", new CredentialLoginRequest(username, password), Request.Method.POST, TokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -175,8 +178,8 @@ public class FigoConnection extends FigoApi {
      * @param token
      *            access or refresh token to be revoked
      */
-    public void revokeToken(String token) throws IOException, FigoError {
-        this.queryApi("/auth/revoke?token=" + URLEncoder.encode(token, "ISO-8859-1"), null, "GET", null);
+    public void revokeToken(String token, Response.Listener<Void> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+        this.queryApi("/auth/revoke?token=" + URLEncoder.encode(token, "ISO-8859-1"), null, Request.Method.GET, null, listener, errorListener);
     }
 
     /**
@@ -193,9 +196,15 @@ public class FigoConnection extends FigoApi {
      *
      * @return Auto-generated recovery password
      */
-    public String addUser(String name, String email, String password, String language) throws IOException, FigoError {
-        CreateUserResponse response = this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), "POST", CreateUserResponse.class);
-        return response.recovery_password;
+    public void addUser(String name, String email, String password, String language, final Response.Listener<String> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
+        Response.Listener<CreateUserResponse> wrapperListener = new Response.Listener<CreateUserResponse>() {
+            @Override
+            public void onResponse(CreateUserResponse response) {
+                listener.onResponse(response.recovery_password);
+            }
+        };
+
+        this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), Request.Method.POST, CreateUserResponse.class, wrapperListener, errorListener);
     }
 
 
@@ -211,9 +220,15 @@ public class FigoConnection extends FigoApi {
      *            Two-letter code of preferred language
      * @return TokenResponse for further API requests
      */
-    public TokenResponse addUserAndLogin(String name, String email, String password, String language) throws IOException, FigoError {
-        CreateUserResponse response = this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), "POST",
-                CreateUserResponse.class);
-        return this.credentialLogin(email, password);
+    public void addUserAndLogin(String name, final String email, final String password, String language, final Response.Listener<TokenResponse> listener, final Response.ErrorListener errorListener) throws IOException, FigoError {
+        Response.Listener<CreateUserResponse> wrapperListener = new Response.Listener<CreateUserResponse>() {
+            @Override
+            public void onResponse(CreateUserResponse response) {
+                FigoConnection.this.credentialLogin(email, password, listener, errorListener);
+            }
+        };
+
+        this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), Request.Method.POST,
+                CreateUserResponse.class, wrapperListener, errorListener);
     }
 }

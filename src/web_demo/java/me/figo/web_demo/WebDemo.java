@@ -1,5 +1,7 @@
 package me.figo.web_demo;
 
+import com.android.volley.Response;
+
 import static spark.Spark.*;
 import me.figo.FigoConnection;
 import me.figo.FigoSession;
@@ -16,7 +18,7 @@ public class WebDemo {
     protected static FigoConnection connection = new FigoConnection("CaESKmC8MAhNpDe5rvmWnSkRE_7pkkVIIgMwclgzGcQY", "STdzfv0GXtEj_bwYn7AgCVszN1kKq5BdgEIKOM_fzybQ", "http://localhost:3000/callback");
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void main(String[] args) {
+    public static void main(String[] args, Response.Listener<T> listener, Response.ErrorListener errorListener) {
         setPort(3000);
         
         get("/logout", (req, res) -> {
@@ -31,7 +33,7 @@ public class WebDemo {
             }
             
             try {
-                TokenResponse token_dict = connection.convertAuthenticationCode(req.queryParams("code"));
+                TokenResponse token_dict = connection.convertAuthenticationCode(req.queryParams("code"), listener, errorListener);
                 req.session(true).attribute("figo_token", token_dict.access_token);
             } catch (Exception e) {
             }
@@ -50,10 +52,10 @@ public class WebDemo {
             
             Map map = new HashMap();
             try {
-                map.put("user", session.getUser());
-                map.put("accounts", session.getAccounts());
-                map.put("current_account", session.getAccount(req.params(":accountId")));
-                map.put("transactions", session.getTransactions(req.params(":accountId")));
+                map.put("user", session.getUser(listener, errorListener));
+                map.put("accounts", session.getAccounts(listener, errorListener));
+                map.put("current_account", session.getAccount(req.params(":accountId"), listener, errorListener));
+                map.put("transactions", session.getTransactions(req.params(":accountId"), errorListener));
             } catch (Exception e) {
             }
             
@@ -70,9 +72,9 @@ public class WebDemo {
             
             Map map = new HashMap();
             try {
-                map.put("user", session.getUser());
-                map.put("accounts", session.getAccounts());
-                map.put("transactions", session.getTransactions());
+                map.put("user", session.getUser(listener, errorListener));
+                map.put("accounts", session.getAccounts(listener, errorListener));
+                map.put("transactions", session.getTransactions(listener, errorListener));
             } catch (Exception e) {
                 e.printStackTrace();
             }

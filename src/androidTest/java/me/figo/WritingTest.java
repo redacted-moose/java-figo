@@ -1,5 +1,7 @@
 package me.figo;
 
+import com.android.volley.Response;
+
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -50,87 +52,87 @@ public class WritingTest {
 	public static void tearDownAfterClass() throws Exception {
 	}
 	
-	public void test_01_addUser() throws IOException, FigoError {
-		String response = this.fc.addUser("Test", rand+USER, PASSWORD, "de");
+	public void test_01_addUser(Response.Listener<T> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
+		String response = this.fc.addUser("Test", rand+USER, PASSWORD, "de", listener, errorListener);
 		assertTrue(response.length() == 19);
 	}
 
-	public void test_02_credentialLogin() throws FigoError, IOException {
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_02_credentialLogin(Response.Listener<T> listener, Response.ErrorListener errorListener) throws FigoError, IOException {
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		assertTrue(accessToken.access_token instanceof String);				
 	}	
 	
-	public void test_03_getSupportedPaymentServices() throws FigoError, IOException	{
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_03_getSupportedPaymentServices(Response.Listener<T> listener, Response.ErrorListener errorListener) throws FigoError, IOException	{
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		List<Service> response = fs.getSupportedServices("de");
+		List<Service> response = fs.getSupportedServices("de", listener, errorListener);
 		assertTrue(response.size() == 22);
 	}
 	
-	public void test_04_getLoginSettings() throws IOException, FigoError {
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_04_getLoginSettings(Response.Listener<T> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		LoginSettings response = fs.getLoginSettings("de", "47251550");
+		LoginSettings response = fs.getLoginSettings("de", "47251550", listener, errorListener);
 		assertTrue(response instanceof LoginSettings);		
 	}
 	
-	public void test_05_addBankAccount() throws FigoError, IOException	{
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_05_addBankAccount(Response.Listener<T> listener, Response.ErrorListener errorListener) throws FigoError, IOException	{
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		TaskTokenResponse response= fs.setupNewAccount(BANKCODE, "de", ACCOUNT, PIN, Arrays.asList("standingOrders"));
-		TaskStatusResponse taskStatus = fs.getTaskState(response);
+		TaskTokenResponse response= fs.setupNewAccount(BANKCODE, "de", ACCOUNT, PIN, Arrays.asList("standingOrders"), listener, errorListener);
+		TaskStatusResponse taskStatus = fs.getTaskState(response, listener, errorListener);
 		assertTrue(taskStatus instanceof TaskStatusResponse);
 		try {
 			Thread.sleep(25000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertTrue(fs.getAccounts().size() == 1);
+		assertTrue(fs.getAccounts(listener, errorListener).size() == 1);
 	}
 	
-	public void test_06_modifyTransaction() throws IOException, FigoError {
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_06_modifyTransaction(Response.Listener<T> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		Account testAccount = fs.getAccounts().get(0);
-		Transaction testTransaction = fs.getTransactions(testAccount).get(0);
+		Account testAccount = fs.getAccounts(listener, errorListener).get(0);
+		Transaction testTransaction = fs.getTransactions(testAccount, listener, errorListener).get(0);
 		String transactionId = testTransaction.getTransactionId();
-		fs.modifyTransaction(testTransaction, FigoSession.FieldVisited.NOT_VISITED);
-		testTransaction = fs.getTransaction(testAccount.getAccountId(), transactionId);
+		fs.modifyTransaction(testTransaction, FigoSession.FieldVisited.NOT_VISITED, listener, errorListener);
+		testTransaction = fs.getTransaction(testAccount.getAccountId(), transactionId, listener, errorListener);
 		assertFalse(testTransaction.isVisited());
-		fs.modifyTransaction(testTransaction, FigoSession.FieldVisited.VISITED);
-		testTransaction = fs.getTransaction(testAccount.getAccountId(), transactionId);
+		fs.modifyTransaction(testTransaction, FigoSession.FieldVisited.VISITED, listener, errorListener);
+		testTransaction = fs.getTransaction(testAccount.getAccountId(), transactionId, listener, errorListener);
 		assertTrue(testTransaction.isVisited());		
 	}
 	
-	public void test_07_modifyAccountTransactions() throws FigoError, IOException	{
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_07_modifyAccountTransactions(Response.Listener<T> listener, Response.ErrorListener errorListener) throws FigoError, IOException	{
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		Account testAccount = fs.getAccounts().get(0);
-		fs.modifyTransactions(testAccount, FigoSession.FieldVisited.NOT_VISITED);
-		Transaction testTransaction = fs.getTransactions(testAccount).get(4);
+		Account testAccount = fs.getAccounts(listener, errorListener).get(0);
+		fs.modifyTransactions(testAccount, FigoSession.FieldVisited.NOT_VISITED, listener, errorListener);
+		Transaction testTransaction = fs.getTransactions(testAccount, listener, errorListener).get(4);
 		assertFalse(testTransaction.isVisited());
-		fs.modifyTransactions(testAccount, FigoSession.FieldVisited.VISITED);
-		testTransaction = fs.getTransactions().get(4);
+		fs.modifyTransactions(testAccount, FigoSession.FieldVisited.VISITED, listener, errorListener);
+		testTransaction = fs.getTransactions(listener, errorListener).get(4);
 		assertTrue(testTransaction.isVisited());
 	}
 	
-	public void test_08_modifyUserTransaction() throws FigoError, IOException	{
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_08_modifyUserTransaction(Response.Listener<T> listener, Response.ErrorListener errorListener) throws FigoError, IOException	{
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		fs.modifyTransactions(FigoSession.FieldVisited.NOT_VISITED);
-		Transaction testTransaction = fs.getTransactions().get(3);
+		fs.modifyTransactions(FigoSession.FieldVisited.NOT_VISITED, listener, errorListener);
+		Transaction testTransaction = fs.getTransactions(listener, errorListener).get(3);
 		assertFalse(testTransaction.isVisited());
-		fs.modifyTransactions(FigoSession.FieldVisited.VISITED);
-		testTransaction = fs.getTransactions().get(3);
+		fs.modifyTransactions(FigoSession.FieldVisited.VISITED, listener, errorListener);
+		testTransaction = fs.getTransactions(listener, errorListener).get(3);
 		assertTrue(testTransaction.isVisited());
 	}
 	
-	public void test_09_deleteTransaction() throws IOException, FigoError {
-		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
+	public void test_09_deleteTransaction(Response.Listener<T> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
+		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD, listener, errorListener);
 		FigoSession fs = new FigoSession(accessToken.access_token);
-		List<Transaction> transactions = fs.getTransactions();
-		fs.removeTransaction(transactions.get(0));
-		assertTrue(transactions.size() > fs.getTransactions().size());
-		fs.removeUser();
+		List<Transaction> transactions = fs.getTransactions(listener, errorListener);
+		fs.removeTransaction(transactions.get(0), listener, errorListener);
+		assertTrue(transactions.size() > fs.getTransactions(listener, errorListener).size());
+		fs.removeUser(listener, errorListener);
 	}
 }
