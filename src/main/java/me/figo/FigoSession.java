@@ -23,6 +23,7 @@
 package me.figo;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 
 import java.io.IOException;
@@ -84,8 +85,8 @@ public class FigoSession extends FigoApi {
      * @param accessToken
      *            the access token to bind this session to a user
      */
-    public FigoSession(String accessToken) {
-        this(accessToken, 10000);
+    public FigoSession(String accessToken, RequestQueue requestQueue) {
+        this(accessToken, 10000, requestQueue);
     }
 
     /**
@@ -96,8 +97,8 @@ public class FigoSession extends FigoApi {
      * @param timeout
      *            the timeout used for queries
      */
-    public FigoSession(String accessToken, int timeout) {
-        this(accessToken, timeout, "https://api.figo.me");
+    public FigoSession(String accessToken, int timeout, RequestQueue requestQueue) {
+        this(accessToken, timeout, "https://api.figo.me", requestQueue);
     }
 
     /**
@@ -110,8 +111,8 @@ public class FigoSession extends FigoApi {
      * @param apiEndpoint
      *            which endpoint to use (customize for different figo deployment)
      */
-    public FigoSession(String accessToken, int timeout, String apiEndpoint) {
-        super(apiEndpoint, "Bearer " + accessToken, timeout);
+    public FigoSession(String accessToken, int timeout, String apiEndpoint, RequestQueue requestQueue) {
+        super(apiEndpoint, "Bearer " + accessToken, timeout, requestQueue);
     }
 
     /**

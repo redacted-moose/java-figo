@@ -26,14 +26,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+
 import me.figo.internal.CreateUserRequest;
 import me.figo.internal.CreateUserResponse;
 import me.figo.internal.CredentialLoginRequest;
 import me.figo.internal.TokenRequest;
 import me.figo.internal.TokenResponse;
+
 import android.util.Base64;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 
 /**
@@ -50,49 +53,37 @@ public class FigoConnection extends FigoApi {
     /**
      * Creates a FigoConnection instance
      *
-     * @param clientId
-     *            the OAuth Client ID as provided by your figo developer contact
-     * @param clientSecret
-     *            the OAuth Client Secret as provided by your figo developer contact
-     * @param redirectUri
-     *            the URI the users gets redirected to after the login is finished or if he presses cancels
+     * @param clientId     the OAuth Client ID as provided by your figo developer contact
+     * @param clientSecret the OAuth Client Secret as provided by your figo developer contact
+     * @param redirectUri  the URI the users gets redirected to after the login is finished or if he presses cancels
      */
-    public FigoConnection(String clientId, String clientSecret, String redirectUri) {
-        this(clientId, clientSecret, redirectUri, 10000);
+    public FigoConnection(String clientId, String clientSecret, String redirectUri, RequestQueue requestQueue) {
+        this(clientId, clientSecret, redirectUri, 10000, requestQueue);
     }
 
     /**
      * Creates a FigoConnection instance
      *
-     * @param clientId
-     *            the OAuth Client ID as provided by your figo developer contact
-     * @param clientSecret
-     *            the OAuth Client Secret as provided by your figo developer contact
-     * @param redirectUri
-     *            the URI the users gets redirected to after the login is finished or if he presses cancels
-     * @param timeout
-     *            the timeout used for queries
+     * @param clientId     the OAuth Client ID as provided by your figo developer contact
+     * @param clientSecret the OAuth Client Secret as provided by your figo developer contact
+     * @param redirectUri  the URI the users gets redirected to after the login is finished or if he presses cancels
+     * @param timeout      the timeout used for queries
      */
-    public FigoConnection(String clientId, String clientSecret, String redirectUri, int timeout) {
-        this(clientId, clientSecret, redirectUri, timeout, "https://api.figo.me");
+    public FigoConnection(String clientId, String clientSecret, String redirectUri, int timeout, RequestQueue requestQueue) {
+        this(clientId, clientSecret, redirectUri, timeout, "https://api.figo.me", requestQueue);
     }
 
     /**
      * Creates a FigoConnection instance
      *
-     * @param clientId
-     *            the OAuth Client ID as provided by your figo developer contact
-     * @param clientSecret
-     *            the OAuth Client Secret as provided by your figo developer contact
-     * @param redirectUri
-     *            the URI the users gets redirected to after the login is finished or if he presses cancels
-     * @param timeout
-     *            the timeout used for queries
-     * @param apiEndpoint
-     *            which endpoint to use (customize for different figo deployment)
+     * @param clientId     the OAuth Client ID as provided by your figo developer contact
+     * @param clientSecret the OAuth Client Secret as provided by your figo developer contact
+     * @param redirectUri  the URI the users gets redirected to after the login is finished or if he presses cancels
+     * @param timeout      the timeout used for queries
+     * @param apiEndpoint  which endpoint to use (customize for different figo deployment)
      */
-    public FigoConnection(String clientId, String clientSecret, String redirectUri, int timeout, String apiEndpoint) {
-        super(apiEndpoint, buildAuthorizationString(clientId, clientSecret), timeout);
+    public FigoConnection(String clientId, String clientSecret, String redirectUri, int timeout, String apiEndpoint, RequestQueue requestQueue) {
+        super(apiEndpoint, buildAuthorizationString(clientId, clientSecret), timeout, requestQueue);
         this.redirectUri = redirectUri;
     }
 
@@ -105,11 +96,9 @@ public class FigoConnection extends FigoApi {
      * The URL a user should open in his/her web browser to start the login process. When the process is completed, the user is redirected to the URL provided
      * to the constructor and passes on an authentication code. This code can be converted into an access token for data access.
      *
-     * @param scope
-     *            Scope of data access to ask the user for, e.g. `accounts=ro`
-     * @param state
-     *            String passed on through the complete login process and to the redirect target at the end. It should be used to validated the authenticity of
-     *            the call to the redirect URL
+     * @param scope Scope of data access to ask the user for, e.g. `accounts=ro`
+     * @param state String passed on through the complete login process and to the redirect target at the end. It should be used to validated the authenticity of
+     *              the call to the redirect URL
      * @return the URL of the first page of the login process
      */
     public String getLoginUrl(String scope, String state) {
@@ -128,11 +117,10 @@ public class FigoConnection extends FigoApi {
     /**
      * Convert the authentication code received as result of the login process into an access token usable for data access.
      *
-     * @param authenticationCode
-     *            the code received as part of the call to the redirect URL at the end of the long process
+     * @param authenticationCode the code received as part of the call to the redirect URL at the end of the long process
      * @return HashMap with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to get a
-     *         FigoSession and access the users data - `refresh_token` - if the scope contained the `offline` flag, also a refresh token is generated. It can be
-     *         used to generate new access tokens, when the first one has expired. - `expires_in` - absolute time the access token expires
+     * FigoSession and access the users data - `refresh_token` - if the scope contained the `offline` flag, also a refresh token is generated. It can be
+     * used to generate new access tokens, when the first one has expired. - `expires_in` - absolute time the access token expires
      */
     public void convertAuthenticationCode(String authenticationCode, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
         if (!authenticationCode.startsWith("O")) {
@@ -145,10 +133,9 @@ public class FigoConnection extends FigoApi {
     /**
      * Convert a refresh token (granted for offline access and returned by `convert_authentication_code`) into an access token usable for data access.
      *
-     * @param refreshToken
-     *            refresh token returned by `convert_authentication_code`
+     * @param refreshToken refresh token returned by `convert_authentication_code`
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
-     *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
+     * get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
     public void convertRefreshToken(String refreshToken, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
         if (!refreshToken.startsWith("R")) {
@@ -160,23 +147,21 @@ public class FigoConnection extends FigoApi {
 
     /**
      * Login an user with his figo username and password credentials
-     * @param username
-     * 			the user's figo username
-     * @param password
-     * 			the user's figo password
+     *
+     * @param username the user's figo username
+     * @param password the user's figo password
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
-     *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
+     * get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
     public void credentialLogin(String username, String password, Response.Listener<TokenResponse> listener, Response.ErrorListener errorListener) {
-    	this.queryApi("/auth/token", new CredentialLoginRequest(username, password), Request.Method.POST, TokenResponse.class, listener, errorListener);
+        this.queryApi("/auth/token", new CredentialLoginRequest(username, password), Request.Method.POST, TokenResponse.class, listener, errorListener);
     }
 
     /**
      * Revoke a granted access or refresh token and thereby invalidate it. Note: this action has immediate effect, i.e. you will not be able use that token
      * anymore after this call.
      *
-     * @param token
-     *            access or refresh token to be revoked
+     * @param token access or refresh token to be revoked
      */
     public void revokeToken(String token, Response.Listener<Void> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
         this.queryApi("/auth/revoke?token=" + URLEncoder.encode(token, "ISO-8859-1"), null, Request.Method.GET, null, listener, errorListener);
@@ -185,15 +170,10 @@ public class FigoConnection extends FigoApi {
     /**
      * Create a new figo Account
      *
-     * @param name
-     *            First and last name
-     * @param email
-     *            Email address; It must obey the figo username and password policy
-     * @param password
-     *            New figo Account password; It must obey the figo username and password policy
-     * @param language
-     *            Two-letter code of preferred language
-     *
+     * @param name     First and last name
+     * @param email    Email address; It must obey the figo username and password policy
+     * @param password New figo Account password; It must obey the figo username and password policy
+     * @param language Two-letter code of preferred language
      * @return Auto-generated recovery password
      */
     public void addUser(String name, String email, String password, String language, final Response.Listener<String> listener, Response.ErrorListener errorListener) throws IOException, FigoError {
@@ -210,14 +190,11 @@ public class FigoConnection extends FigoApi {
 
     /**
      * Creates a new figo User and returns a login token
-     * @param name
-     *            First and last name
-     * @param email
-     *            Email address; It must obey the figo username and password policy
-     * @param password
-     *            New figo Account password; It must obey the figo username and password policy
-     * @param language
-     *            Two-letter code of preferred language
+     *
+     * @param name     First and last name
+     * @param email    Email address; It must obey the figo username and password policy
+     * @param password New figo Account password; It must obey the figo username and password policy
+     * @param language Two-letter code of preferred language
      * @return TokenResponse for further API requests
      */
     public void addUserAndLogin(String name, final String email, final String password, String language, final Response.Listener<TokenResponse> listener, final Response.ErrorListener errorListener) throws IOException, FigoError {
