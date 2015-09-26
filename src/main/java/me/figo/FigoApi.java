@@ -70,7 +70,7 @@ public class FigoApi {
      *            Type of expected response
      * @return the parsed result of the request
      */
-    public <T> T queryApi(String path, Object data, String method, Type typeOfT) throws IOException, FigoException {
+    public <T> T queryApi(String path, Object data, String method, Type typeOfT) throws IOException, FigoError {
         URL url = new URL(apiEndpoint + path);
 
         // configure URL connection, i.e. the HTTP request
@@ -122,18 +122,18 @@ public class FigoApi {
      * @param typeOfT
      * @return
      */
-    protected <T> T processResponse(HttpURLConnection connection, Type typeOfT) throws IOException, FigoException {
+    protected <T> T processResponse(HttpURLConnection connection, Type typeOfT) throws IOException, FigoError {
         // process response
         int code = connection.getResponseCode();
         if (code >= 200 && code < 300) {
             return handleResponse(connection.getInputStream(), typeOfT);
         } else if (code == 400) {
-            throw new FigoException((FigoException.ErrorResponse) handleResponse(connection.getErrorStream(), FigoException.ErrorResponse.class));
+            throw new FigoError((FigoError.ErrorResponse) handleResponse(connection.getErrorStream(), FigoError.ErrorResponse.class));
         } else if (code == 401) {
-            throw new FigoException("access_denied", "Access Denied");
+            throw new FigoError("access_denied", "Access Denied");
         } else {
             // return decode(connection.getErrorStream(), resultType);
-            throw new FigoException("internal_server_error", "We are very sorry, but something went wrong");
+            throw new FigoError("internal_server_error", "We are very sorry, but something went wrong");
         }
     }
     

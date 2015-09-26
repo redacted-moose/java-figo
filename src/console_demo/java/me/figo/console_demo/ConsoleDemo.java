@@ -2,14 +2,14 @@ package me.figo.console_demo;
 
 import java.io.IOException;
 
-import me.figo.FigoException;
+import me.figo.FigoError;
 import me.figo.FigoSession;
 import me.figo.models.Account;
 import me.figo.models.Transaction;
 
 public class ConsoleDemo {
 
-    public static void main(String[] args) throws FigoException, IOException {
+    public static void main(String[] args) throws FigoError, IOException {
         FigoSession session = new FigoSession("ASHWLIkouP2O6_bgA2wWReRhletgWKHYjLqDaqb0LFfamim9RjexTo22ujRIP_cjLiRiSyQXyt2kM1eXU2XLFZQ0Hro15HikJQT_eNeT_9XQ");
 
         // print out a list of accounts including its balance

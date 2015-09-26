@@ -131,9 +131,9 @@ public class FigoConnection extends FigoApi {
      *         FigoSession and access the users data - `refresh_token` - if the scope contained the `offline` flag, also a refresh token is generated. It can be
      *         used to generate new access tokens, when the first one has expired. - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse convertAuthenticationCode(String authenticationCode) throws FigoException, IOException {
+    public TokenResponse convertAuthenticationCode(String authenticationCode) throws FigoError, IOException {
         if (!authenticationCode.startsWith("O")) {
-            throw new FigoException("invalid_code", "Invalid authentication code");
+            throw new FigoError("invalid_code", "Invalid authentication code");
         }
 
         return this.queryApi("/auth/token", new TokenRequest(null, authenticationCode, this.redirectUri, "authorization_code"), "POST", TokenResponse.class);
@@ -147,9 +147,9 @@ public class FigoConnection extends FigoApi {
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
      *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse convertRefreshToken(String refreshToken) throws IOException, FigoException {
+    public TokenResponse convertRefreshToken(String refreshToken) throws IOException, FigoError {
         if (!refreshToken.startsWith("R")) {
-            throw new FigoException("invalid_code", "Invalid authentication code");
+            throw new FigoError("invalid_code", "Invalid authentication code");
         }
 
         return this.queryApi("/auth/token", new TokenRequest(refreshToken, null, this.redirectUri, "refresh_token"), "POST", TokenResponse.class);
@@ -164,7 +164,7 @@ public class FigoConnection extends FigoApi {
      * @return Dictionary with the following keys: - `access_token` - the access token for data access. You can pass it into `FigoConnection.open_session` to
      *         get a FigoSession and access the users data - `expires_in` - absolute time the access token expires
      */
-    public TokenResponse credentialLogin(String username, String password) throws IOException, FigoException	{
+    public TokenResponse credentialLogin(String username, String password) throws IOException, FigoError {
     	return this.queryApi("/auth/token", new CredentialLoginRequest(username, password), "POST", TokenResponse.class);
     }
 
@@ -175,7 +175,7 @@ public class FigoConnection extends FigoApi {
      * @param token
      *            access or refresh token to be revoked
      */
-    public void revokeToken(String token) throws IOException, FigoException {
+    public void revokeToken(String token) throws IOException, FigoError {
         this.queryApi("/auth/revoke?token=" + URLEncoder.encode(token, "ISO-8859-1"), null, "GET", null);
     }
 
@@ -193,7 +193,7 @@ public class FigoConnection extends FigoApi {
      *
      * @return Auto-generated recovery password
      */
-    public String addUser(String name, String email, String password, String language) throws IOException, FigoException {
+    public String addUser(String name, String email, String password, String language) throws IOException, FigoError {
         CreateUserResponse response = this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), "POST", CreateUserResponse.class);
         return response.recovery_password;
     }
@@ -211,7 +211,7 @@ public class FigoConnection extends FigoApi {
      *            Two-letter code of preferred language
      * @return TokenResponse for further API requests
      */
-    public TokenResponse addUserAndLogin(String name, String email, String password, String language) throws IOException, FigoException {
+    public TokenResponse addUserAndLogin(String name, String email, String password, String language) throws IOException, FigoError {
         CreateUserResponse response = this.queryApi("/auth/user", new CreateUserRequest(name, email, password, language), "POST",
                 CreateUserResponse.class);
         return this.credentialLogin(email, password);

@@ -32,13 +32,11 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-import me.figo.internal.TokenResponse;
 import me.figo.models.Account;
 import me.figo.models.Notification;
 import me.figo.models.Payment;
 import me.figo.models.PaymentProposal;
 import me.figo.models.PaymentType;
-import me.figo.models.Security;
 import me.figo.models.StandingOrder;
 import me.figo.models.TanScheme;
 import me.figo.models.Transaction;
@@ -57,80 +55,80 @@ public class SessionTest {
     }
 
     @Test
-    public void testGetAccount() throws FigoException, IOException {
+    public void testGetAccount() throws FigoError, IOException {
         Account a = sut.getAccount("A1.2");
         assertEquals(a.getAccountId(), "A1.2");
     }
 
     @Test
-    public void testGetAccountBalance() throws FigoException, IOException	{
+    public void testGetAccountBalance() throws FigoError, IOException	{
     	Account a = sut.getAccount("A1.2");
         assertNotNull(a.getBalance().getBalance());
         assertNotNull(a.getBalance().getBalanceDate());
     }
 
     @Test
-    public void testGetAccountTransactions() throws FigoException, IOException	{
+    public void testGetAccountTransactions() throws FigoError, IOException	{
     	Account a = sut.getAccount("A1.2");
         List<Transaction> ts = sut.getTransactions(a);
         assertTrue(ts.size() > 0);
     }
 
     @Test
-    public void testGetAccountPayments() throws FigoException, IOException	{
+    public void testGetAccountPayments() throws FigoError, IOException	{
     	Account a = sut.getAccount("A1.2");
         List<Payment> ps = sut.getPayments(a);
         assertTrue(ps.size() >= 0);
     }
     
     @Test
-    public void testGetSupportedTanSchemes() throws FigoException, IOException	{
+    public void testGetSupportedTanSchemes() throws FigoError, IOException	{
     	Account a = sut.getAccount("A1.1");
     	List<TanScheme> schemes = a.getSupportedTanSchemes();
     	assertTrue(schemes.size() == 3);
     }
 
     @Test
-    public void testGetTransactions() throws FigoException, IOException {
+    public void testGetTransactions() throws FigoError, IOException {
         List<Transaction> transactions = sut.getTransactions();
         assertTrue(transactions.size() > 0);
     }
 
     @Test
-    public void testGetNotifications() throws FigoException, IOException {
+    public void testGetNotifications() throws FigoError, IOException {
         List<Notification> notifications = sut.getNotifications();
         assertTrue(notifications.size() > 0);
     }
 
     @Test
-    public void testGetPayments() throws FigoException, IOException {
+    public void testGetPayments() throws FigoError, IOException {
         List<Payment> payments = sut.getPayments();
         assertTrue(payments.size() >= 0);
     }
 
     @Test
-    public void testMissingHandling() throws IOException, FigoException {
+    public void testMissingHandling() throws IOException, FigoError {
         assertNull(sut.getAccount("A1.5"));
     }
 
-    @Test(expected=FigoException.class)
-    public void testExceptionHandling() throws IOException, FigoException {
+    @Test(expected=FigoError.class)
+    public void testExceptionHandling() throws IOException, FigoError {
         sut.getSyncURL("", "http://localhost:3003/");
     }
 
     @Test
-    public void testSyncUri() throws FigoException, IOException {
+    public void testSyncUri() throws FigoError, IOException {
         assertNotNull(sut.getSyncURL("qwe", "http://figo.me/test"));
     }
 
     @Test
-    public void testUser() throws FigoException, IOException {
+    public void testUser() throws FigoError, IOException {
         User user = sut.getUser();
         assertEquals("demo@figo.me", user.getEmail());
     }
 
     @Test
-    public void testCreateUpdateDeleteNotification() throws FigoException, IOException {
+    public void testCreateUpdateDeleteNotification() throws FigoError, IOException {
         Notification addedNotificaton = sut.addNotification(new Notification("/rest/transactions", "http://figo.me/test", "qwe"));
         assertNotNull(addedNotificaton.getNotificationId());
         assertEquals(addedNotificaton.getObserveKey(), "/rest/transactions");
@@ -151,7 +149,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testCreateUpdateDeletePayment() throws FigoException, IOException {
+    public void testCreateUpdateDeletePayment() throws FigoError, IOException {
         Payment addedPayment = sut.addPayment(new Payment("Transfer", "A1.1", "4711951501", "90090042", "figo", "Thanks for all the fish.", new BigDecimal(0.89)));
         assertNotNull(addedPayment.getPaymentId());
         assertEquals("A1.1", addedPayment.getAccountId());
@@ -171,19 +169,19 @@ public class SessionTest {
         assertNull(reretrievedPayment);
     }
 
-    public void testGetPaymentProposals() throws FigoException, IOException	{
+    public void testGetPaymentProposals() throws FigoError, IOException	{
     	List<PaymentProposal> proposals = sut.getPaymentProposals();
     	assertEquals(2, proposals.size());
     }
     
     @Test
-    public void testGetSupportedPaymentTypes() throws FigoException, IOException	{
+    public void testGetSupportedPaymentTypes() throws FigoError, IOException	{
     	HashMap<String, PaymentType> types = sut.getAccounts().get(0).getSupportedPaymentTypes();
     	assertEquals(2, types.size());
     }
     
     @Test
-	public void testGetStandingOrders() throws IOException, FigoException {
+	public void testGetStandingOrders() throws IOException, FigoError {
         List<StandingOrder> so = sut.getStandingOrders();
         assertTrue(so.size() > 0);
 	}

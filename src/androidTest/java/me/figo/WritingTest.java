@@ -13,7 +13,6 @@ import me.figo.internal.TokenResponse;
 import me.figo.models.Account;
 import me.figo.models.LoginSettings;
 import me.figo.models.Service;
-import me.figo.models.StandingOrder;
 import me.figo.models.Transaction;
 import me.figo.internal.TaskTokenResponse;
 
@@ -51,31 +50,31 @@ public class WritingTest {
 	public static void tearDownAfterClass() throws Exception {
 	}
 	
-	public void test_01_addUser() throws IOException, FigoException {
+	public void test_01_addUser() throws IOException, FigoError {
 		String response = this.fc.addUser("Test", rand+USER, PASSWORD, "de");
 		assertTrue(response.length() == 19);
 	}
 
-	public void test_02_credentialLogin() throws FigoException, IOException {
+	public void test_02_credentialLogin() throws FigoError, IOException {
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		assertTrue(accessToken.access_token instanceof String);				
 	}	
 	
-	public void test_03_getSupportedPaymentServices() throws FigoException, IOException	{
+	public void test_03_getSupportedPaymentServices() throws FigoError, IOException	{
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		List<Service> response = fs.getSupportedServices("de");
 		assertTrue(response.size() == 22);
 	}
 	
-	public void test_04_getLoginSettings() throws IOException, FigoException	{
+	public void test_04_getLoginSettings() throws IOException, FigoError {
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		LoginSettings response = fs.getLoginSettings("de", "47251550");
 		assertTrue(response instanceof LoginSettings);		
 	}
 	
-	public void test_05_addBankAccount() throws FigoException, IOException	{
+	public void test_05_addBankAccount() throws FigoError, IOException	{
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		TaskTokenResponse response= fs.setupNewAccount(BANKCODE, "de", ACCOUNT, PIN, Arrays.asList("standingOrders"));
@@ -89,7 +88,7 @@ public class WritingTest {
 		assertTrue(fs.getAccounts().size() == 1);
 	}
 	
-	public void test_06_modifyTransaction() throws IOException, FigoException	{
+	public void test_06_modifyTransaction() throws IOException, FigoError {
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		Account testAccount = fs.getAccounts().get(0);
@@ -103,7 +102,7 @@ public class WritingTest {
 		assertTrue(testTransaction.isVisited());		
 	}
 	
-	public void test_07_modifyAccountTransactions() throws FigoException, IOException	{
+	public void test_07_modifyAccountTransactions() throws FigoError, IOException	{
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		Account testAccount = fs.getAccounts().get(0);
@@ -115,7 +114,7 @@ public class WritingTest {
 		assertTrue(testTransaction.isVisited());
 	}
 	
-	public void test_08_modifyUserTransaction() throws FigoException, IOException	{
+	public void test_08_modifyUserTransaction() throws FigoError, IOException	{
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		fs.modifyTransactions(FigoSession.FieldVisited.NOT_VISITED);
@@ -126,7 +125,7 @@ public class WritingTest {
 		assertTrue(testTransaction.isVisited());
 	}
 	
-	public void test_09_deleteTransaction() throws IOException, FigoException	{
+	public void test_09_deleteTransaction() throws IOException, FigoError {
 		TokenResponse accessToken = this.fc.credentialLogin(USER, PASSWORD);
 		FigoSession fs = new FigoSession(accessToken.access_token);
 		List<Transaction> transactions = fs.getTransactions();

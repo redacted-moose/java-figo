@@ -17,7 +17,7 @@ And just as easy to use:
 ```java
 import java.io.IOException;
 
-import me.figo.FigoException;
+import me.figo.FigoError;
 import me.figo.FigoSession;
 import me.figo.models.Account;
 import me.figo.models.Transaction;
