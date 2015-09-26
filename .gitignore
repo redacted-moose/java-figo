@@ -1,8 +1,1 @@
-*.class
-.settings/
-
-# Package Files #
-*.war
-*.ear
-/bin
-/target
+/build

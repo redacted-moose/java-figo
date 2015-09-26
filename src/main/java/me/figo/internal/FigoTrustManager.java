@@ -82,7 +82,7 @@ public class FigoTrustManager implements X509TrustManager {
             byte[] der = cert.getEncoded();
             md.update(der);
             byte[] digest = md.digest();
-            return new String(Hex.encodeHex(digest, false));
+            return new String(Hex.encodeHex(digest));
         } catch (NoSuchAlgorithmException e) {
             return "";
         } catch (CertificateEncodingException e) {
