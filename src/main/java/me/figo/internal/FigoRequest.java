@@ -32,7 +32,6 @@ public class FigoRequest<T> extends Request<T> {
         this.headers = new HashMap<String, String>();
         this.headers.put("Authorization", authorization);
         this.headers.put("Accept", "application/json");
-        this.headers.put("Content-Type", "application/json");
         this.data = data;
     }
 
@@ -45,6 +44,11 @@ public class FigoRequest<T> extends Request<T> {
         }
 
         return null;
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return "application/json";
     }
 
     @Override

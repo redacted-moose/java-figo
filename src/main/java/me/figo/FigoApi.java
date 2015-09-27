@@ -64,19 +64,19 @@ public class FigoApi {
 
     /**
      * Helper method for making a OAuth2-compliant API call
-     *
-     * @param <T>           Type of expected response
-     * @param clazz         Class of expected response
+     *  @param <T>           Type of expected response
+     * @param clazz
      * @param path          path on the server to call
      * @param data          Payload of the request
      * @param method        the HTTP verb to use
-     * @param clazz
+     * @param clazz         Class of expected response
      * @param listener
      * @param errorListener @return the parsed result of the request
      */
-    public <T> void queryApi(String path, Object data, int method, Class<T> clazz, Response.Listener<T> listener, Response.ErrorListener errorListener) {
-        FigoRequest request = new FigoRequest<T>(method, apiEndpoint, path, authorization, data, clazz, listener, errorListener);
+    public <T> FigoRequest<T> queryApi(String path, Object data, int method, Class<T> clazz, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+        FigoRequest<T> request = new FigoRequest<T>(method, apiEndpoint, path, authorization, data, clazz, listener, errorListener);
         requestQueue.add(request);
+        return request;
     }
 
     /**

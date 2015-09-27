@@ -34,6 +34,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import me.figo.internal.AccountOrderRequest;
+import me.figo.internal.FigoRequest;
 import me.figo.internal.SetupAccountRequest;
 import me.figo.internal.SubmitPaymentRequest;
 import me.figo.internal.SyncTokenRequest;
@@ -120,8 +121,8 @@ public class FigoSession extends FigoApi {
      *
      * @return User for the current figo Account
      */
-    public void getUser(Response.Listener<User> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/user", null, Request.Method.GET, User.class, listener, errorListener);
+    public FigoRequest getUser(Response.Listener<User> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/user", null, Request.Method.GET, User.class, listener, errorListener);
     }
 
     /**
@@ -131,15 +132,15 @@ public class FigoSession extends FigoApi {
      *            modified user object to be saved
      * @return User object for the updated figo Account
      */
-    public void updateUser(User user, Response.Listener<User> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/user", user, Request.Method.PUT, User.class, listener, errorListener);
+    public FigoRequest updateUser(User user, Response.Listener<User> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/user", user, Request.Method.PUT, User.class, listener, errorListener);
     }
 
     /**
      * Delete figo Account
      */
-    public void removeUser(Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/user", null, Request.Method.DELETE, null, listener, errorListener);
+    public FigoRequest removeUser(Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/user", null, Request.Method.DELETE, null, listener, errorListener);
     }
 
     /**
@@ -147,7 +148,7 @@ public class FigoSession extends FigoApi {
      * @param countryCode
      * @return List of Services
      */
-    public void getSupportedServices(String countryCode, final Response.Listener<List<Service>> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest getSupportedServices(String countryCode, final Response.Listener<List<Service>> listener, Response.ErrorListener errorListener) 	{
         Response.Listener<Service.ServiceResponse> wrapperListener = new Response.Listener<Service.ServiceResponse>() {
             @Override
             public void onResponse(Service.ServiceResponse response) {
@@ -155,7 +156,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-    	this.queryApi("/rest/catalog/services/" + countryCode, null, Request.Method.GET, Service.ServiceResponse.class, wrapperListener, errorListener);
+    	return this.queryApi("/rest/catalog/services/" + countryCode, null, Request.Method.GET, Service.ServiceResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -164,8 +165,8 @@ public class FigoSession extends FigoApi {
      * @param bankCode
      * @return LoginSettings
      */
-    public void getLoginSettings(String countryCode, String bankCode, Response.Listener<LoginSettings> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/catalog/banks/" + countryCode + "/" + bankCode, null, Request.Method.GET, LoginSettings.class, listener, errorListener);
+    public FigoRequest getLoginSettings(String countryCode, String bankCode, Response.Listener<LoginSettings> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/catalog/banks/" + countryCode + "/" + bankCode, null, Request.Method.GET, LoginSettings.class, listener, errorListener);
     }
 
     @Deprecated
@@ -177,8 +178,8 @@ public class FigoSession extends FigoApi {
      * @param pin
      * @return
      */
-    public void setupNewAccount(String bankCode, String countryCode, String loginName, String pin, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, loginName, pin), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
+    public FigoRequest setupNewAccount(String bankCode, String countryCode, String loginName, String pin, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, loginName, pin), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -190,8 +191,8 @@ public class FigoSession extends FigoApi {
      * @param
      * @return
      */
-    public void setupNewAccount(String bankCode, String countryCode, String loginName, String pin, List<String> syncTasks, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, loginName, pin, syncTasks), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
+    public FigoRequest setupNewAccount(String bankCode, String countryCode, String loginName, String pin, List<String> syncTasks, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, loginName, pin, syncTasks), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
     }
 
     @Deprecated
@@ -203,8 +204,8 @@ public class FigoSession extends FigoApi {
      * @param pin
      * @return
      */
-    public void setupNewAccount(String bankCode, String countryCode, List<String> credentials, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, credentials), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
+    public FigoRequest setupNewAccount(String bankCode, String countryCode, List<String> credentials, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, credentials), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -215,8 +216,8 @@ public class FigoSession extends FigoApi {
      * @param pin
      * @return
      */
-    public void setupNewAccount(String bankCode, String countryCode, List<String> credentials, List<String> syncTasks, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, credentials, syncTasks), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
+    public FigoRequest setupNewAccount(String bankCode, String countryCode, List<String> credentials, List<String> syncTasks, Response.Listener<TaskTokenResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts", new SetupAccountRequest(bankCode, countryCode, credentials, syncTasks), Request.Method.POST, TaskTokenResponse.class, listener, errorListener);
     }
 
     /**
@@ -224,7 +225,7 @@ public class FigoSession extends FigoApi {
      *
      * @return List of Accounts
      */
-    public void getAccounts(final Response.Listener<List<Account>> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getAccounts(final Response.Listener<List<Account>> listener, Response.ErrorListener errorListener)  {
         Response.Listener<Account.AccountsResponse> wrapperListener = new Response.Listener<Account.AccountsResponse>() {
             @Override
             public void onResponse(Account.AccountsResponse response) {
@@ -232,7 +233,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/accounts", null, Request.Method.GET, Account.AccountsResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/accounts", null, Request.Method.GET, Account.AccountsResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -242,8 +243,8 @@ public class FigoSession extends FigoApi {
      *            figo ID of the account to be retrieved
      * @return Account or Null
      */
-    public void getAccount(String accountId, Response.Listener<Account> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId, null, Request.Method.GET, Account.class, listener, errorListener);
+    public FigoRequest getAccount(String accountId, Response.Listener<Account> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId, null, Request.Method.GET, Account.class, listener, errorListener);
     }
 
     /**
@@ -253,8 +254,8 @@ public class FigoSession extends FigoApi {
      *            the modified account to be saved
      * @return Account object for the updated account returned by server
      */
-    public void updateAccount(Account account, Response.Listener<Account> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + account.getAccountId(), account, Request.Method.PUT, Account.class, listener, errorListener);
+    public FigoRequest updateAccount(Account account, Response.Listener<Account> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + account.getAccountId(), account, Request.Method.PUT, Account.class, listener, errorListener);
     }
 
     /**
@@ -263,8 +264,8 @@ public class FigoSession extends FigoApi {
      * @param accountId
      *            ID of the account to be removed
      */
-    public void removeAccount(String accountId, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId, null, Request.Method.DELETE, null, listener, errorListener);
+    public FigoRequest removeAccount(String accountId, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId, null, Request.Method.DELETE, null, listener, errorListener);
     }
 
     /**
@@ -273,8 +274,8 @@ public class FigoSession extends FigoApi {
      * @param account
      *            Account to be removed
      */
-    public void removeAccount(Account account, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        removeAccount(account.getAccountId(), listener, errorListener);
+    public FigoRequest removeAccount(Account account, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return removeAccount(account.getAccountId(), listener, errorListener);
     }
 
     /**
@@ -284,8 +285,8 @@ public class FigoSession extends FigoApi {
      *            figo ID of the account to be retrieved
      * @return AccountBalance or Null
      */
-    public void getAccountBalance(String accountId, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId + "/balance", null, Request.Method.GET, AccountBalance.class, listener, errorListener);
+    public FigoRequest getAccountBalance(String accountId, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId + "/balance", null, Request.Method.GET, AccountBalance.class, listener, errorListener);
     }
 
     /**
@@ -295,8 +296,8 @@ public class FigoSession extends FigoApi {
      *            account whose balance should be retrieved
      * @return AccountBalance or Null
      */
-    public void getAccountBalance(Account account, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
-        getAccountBalance(account.getAccountId(), listener, errorListener);
+    public FigoRequest getAccountBalance(Account account, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
+        return getAccountBalance(account.getAccountId(), listener, errorListener);
     }
 
     /**
@@ -308,8 +309,8 @@ public class FigoSession extends FigoApi {
      *            modified AccountBalance object to be saved
      * @return AccountBalance object for the updated account as returned by the server
      */
-    public void updateAccountBalance(String accountId, AccountBalance accountBalance, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId + "/balance", accountBalance, Request.Method.PUT, AccountBalance.class, listener, errorListener);
+    public FigoRequest updateAccountBalance(String accountId, AccountBalance accountBalance, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId + "/balance", accountBalance, Request.Method.PUT, AccountBalance.class, listener, errorListener);
     }
 
     /**
@@ -321,8 +322,8 @@ public class FigoSession extends FigoApi {
      *            modified AccountBalance object to be saved
      * @return AccountBalance object for the updated account as returned by the server
      */
-    public void updateAccountBalance(Account account, AccountBalance accountBalance, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
-        updateAccountBalance(account.getAccountId(), accountBalance, listener, errorListener);
+    public FigoRequest updateAccountBalance(Account account, AccountBalance accountBalance, Response.Listener<AccountBalance> listener, Response.ErrorListener errorListener)  {
+        return updateAccountBalance(account.getAccountId(), accountBalance, listener, errorListener);
     }
 
     /**
@@ -330,8 +331,8 @@ public class FigoSession extends FigoApi {
      * @param orderedList
      * 			List of accounts in the new order
      */
-    public void setAccountOrder(List<Account> orderedList, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts", new AccountOrderRequest(orderedList), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest setAccountOrder(List<Account> orderedList, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts", new AccountOrderRequest(orderedList), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -339,8 +340,8 @@ public class FigoSession extends FigoApi {
      *
      * @return List of Transaction objects
      */
-    public void getTransactions(Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
-        getTransactions((String) null, listener, errorListener);
+    public FigoRequest getTransactions(Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+        return getTransactions((String) null, listener, errorListener);
     }
 
     /**
@@ -350,8 +351,8 @@ public class FigoSession extends FigoApi {
      *            the ID of the account for which to retrieve the transactions
      * @return List of Transactions
      */
-    public void getTransactions(String accountId, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
-        this.getTransactions(accountId, null, null, null, null, listener, errorListener);
+    public FigoRequest getTransactions(String accountId, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+        return this.getTransactions(accountId, null, null, null, null, listener, errorListener);
     }
 
     /**
@@ -361,8 +362,8 @@ public class FigoSession extends FigoApi {
      *            the account for which to retrieve the transactions
      * @return List of Transactions
      */
-    public void getTransactions(Account account, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
-        this.getTransactions(account, null, null, null, null, listener, errorListener);
+    public FigoRequest getTransactions(Account account, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+        return this.getTransactions(account, null, null, null, null, listener, errorListener);
     }
 
     /**
@@ -381,8 +382,8 @@ public class FigoSession extends FigoApi {
      *            set, regardless of the `since` parameter
      * @return an array of Transaction objects
      */
-    public void getTransactions(Account account, String since, Integer count, Integer offset, PendingTransactions include_pending, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
-        getTransactions(account == null ? null : account.getAccountId(), since, count, offset, include_pending, listener, errorListener);
+    public FigoRequest getTransactions(Account account, String since, Integer count, Integer offset, PendingTransactions include_pending, Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+        return getTransactions(account == null ? null : account.getAccountId(), since, count, offset, include_pending, listener, errorListener);
     }
 
     /**
@@ -401,7 +402,7 @@ public class FigoSession extends FigoApi {
      *            set, regardless of the `since` parameter
      * @return an array of Transaction objects
      */
-    public void getTransactions(String accountId, String since, Integer count, Integer offset, PendingTransactions include_pending, final Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
+    public FigoRequest getTransactions(String accountId, String since, Integer count, Integer offset, PendingTransactions include_pending, final Response.Listener<List<Transaction>> listener, Response.ErrorListener errorListener) throws UnsupportedEncodingException {
         String path = "";
         if (accountId == null) {
             path += "/rest/transactions?";
@@ -428,7 +429,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi(path, null, Request.Method.GET, Transaction.TransactionsResponse.class, wrapperListener, errorListener);
+        return this.queryApi(path, null, Request.Method.GET, Transaction.TransactionsResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -440,8 +441,8 @@ public class FigoSession extends FigoApi {
      *            the figo ID of the specific transaction
      * @return Transaction or null
      */
-    public void getTransaction(String accountId, String transactionId, Response.Listener<Transaction> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId + "/transactions/" + transactionId, null, Request.Method.GET, Transaction.class, listener, errorListener);
+    public FigoRequest getTransaction(String accountId, String transactionId, Response.Listener<Transaction> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId + "/transactions/" + transactionId, null, Request.Method.GET, Transaction.class, listener, errorListener);
     }
 
     /**
@@ -451,8 +452,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 				new value for the visited field
      */
-    public void modifyTransaction(Transaction transaction, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + transaction.getAccountId() + "/transactions/" + transaction.getTransactionId(), new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifyTransaction(Transaction transaction, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + transaction.getAccountId() + "/transactions/" + transaction.getTransactionId(), new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
 
@@ -461,8 +462,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifyTransactions(FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifyTransactions(FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -472,8 +473,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifyTransactions(Account account, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + account.getAccountId() + "/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifyTransactions(Account account, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + account.getAccountId() + "/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -483,8 +484,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifyTransactions(String accountId, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + accountId + "/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifyTransactions(String accountId, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + accountId + "/transactions", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -492,8 +493,8 @@ public class FigoSession extends FigoApi {
      * @param transaction
      * 				transaction which will be removed
      */
-    public void removeTransaction(Transaction transaction, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + transaction.getAccountId() + "/transactions/" + transaction.getTransactionId(), null, Request.Method.DELETE, null, listener, errorListener);
+    public FigoRequest removeTransaction(Transaction transaction, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + transaction.getAccountId() + "/transactions/" + transaction.getTransactionId(), null, Request.Method.DELETE, null, listener, errorListener);
     }
 
     /**
@@ -503,7 +504,7 @@ public class FigoSession extends FigoApi {
      *            ID of the account for which to list the standing orders
      * @return an array of Standing Order objects
      */
-    public void getStandingOrders(String accountId, final Response.Listener<List<StandingOrder>> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getStandingOrders(String accountId, final Response.Listener<List<StandingOrder>> listener, Response.ErrorListener errorListener)  {
         String path = "";
         if (accountId == null) {
             path += "/rest/standing_orders";
@@ -518,7 +519,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi(path, null, Request.Method.GET, StandingOrder.StandingOrdersResponse.class, wrapperListener, errorListener);
+        return this.queryApi(path, null, Request.Method.GET, StandingOrder.StandingOrdersResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -526,8 +527,8 @@ public class FigoSession extends FigoApi {
      *
      * @return List of Standing Order objects
      */
-    public void getStandingOrders(Response.Listener<List<StandingOrder>> listener, Response.ErrorListener errorListener)  {
-        getStandingOrders((String) null, listener, errorListener);
+    public FigoRequest getStandingOrders(Response.Listener<List<StandingOrder>> listener, Response.ErrorListener errorListener)  {
+        return getStandingOrders((String) null, listener, errorListener);
     }
 
     /**
@@ -539,8 +540,8 @@ public class FigoSession extends FigoApi {
      *            the figo ID of the specific standingOrder
      * @return Standing Order or null
      */
-    public void getStandingOrder(String accountId, String standingOrderId, Response.Listener<StandingOrder> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/accounts/" + accountId + "/standing_orders/" + standingOrderId, null, Request.Method.GET, StandingOrder.class, listener, errorListener);
+    public FigoRequest getStandingOrder(String accountId, String standingOrderId, Response.Listener<StandingOrder> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/accounts/" + accountId + "/standing_orders/" + standingOrderId, null, Request.Method.GET, StandingOrder.class, listener, errorListener);
     }
 
     /**
@@ -551,8 +552,8 @@ public class FigoSession extends FigoApi {
      * 			id of the security which will be retrieved
      * @return	Security or null
      */
-    public void getSecurity(String accountId, String securityId, Response.Listener<Security> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + accountId + "/securities/" + securityId, null, Request.Method.GET, Security.class, listener, errorListener);
+    public FigoRequest getSecurity(String accountId, String securityId, Response.Listener<Security> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + accountId + "/securities/" + securityId, null, Request.Method.GET, Security.class, listener, errorListener);
     }
 
     /**
@@ -563,15 +564,15 @@ public class FigoSession extends FigoApi {
      * 			id of the security which will be retrieved
      * @return	Security or null
      */
-    public void getSecurity(Account account, String securityId, Response.Listener<Security> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities/" + securityId, null, Request.Method.GET, Security.class, listener, errorListener);
+    public FigoRequest getSecurity(Account account, String securityId, Response.Listener<Security> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities/" + securityId, null, Request.Method.GET, Security.class, listener, errorListener);
     }
 
     /**
      * Retrieves all securities of the current user
      * @return List of Securities or null
      */
-    public void getSecurities(final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest getSecurities(final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
         Response.Listener<Security.SecurityResponse> wrapperListener = new Response.Listener<Security.SecurityResponse>() {
             @Override
             public void onResponse(Security.SecurityResponse response) {
@@ -579,7 +580,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-    	this.queryApi("/rest/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
+    	return this.queryApi("/rest/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -587,7 +588,7 @@ public class FigoSession extends FigoApi {
      * @param account Security owning account
      * @return List of Securities or null
      */
-    public void getSecurities(Account account, final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest getSecurities(Account account, final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
         Response.Listener<Security.SecurityResponse> wrapperListener = new Response.Listener<Security.SecurityResponse>() {
             @Override
             public void onResponse(Security.SecurityResponse response) {
@@ -595,7 +596,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-    	this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
+    	return this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -603,7 +604,7 @@ public class FigoSession extends FigoApi {
      * @param accountId Security owning account id
      * @return List of Securities or null
      */
-    public void getSecurities(String accountId, final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest getSecurities(String accountId, final Response.Listener<List<Security>> listener, Response.ErrorListener errorListener) 	{
         Response.Listener<Security.SecurityResponse> wrapperListener = new Response.Listener<Security.SecurityResponse>() {
             @Override
             public void onResponse(Security.SecurityResponse response) {
@@ -611,7 +612,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-    	this.queryApi("/rest/accounts/" + accountId + "/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
+    	return this.queryApi("/rest/accounts/" + accountId + "/securities", null, Request.Method.GET, Security.SecurityResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -621,8 +622,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifySecurity(Security security, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + security.getAccountId() + "/securities/" + security.getSecurityId(), new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifySecurity(Security security, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + security.getAccountId() + "/securities/" + security.getSecurityId(), new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -630,8 +631,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifySecurities(FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifySecurities(FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -641,8 +642,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifySecurities(Account account, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifySecurities(Account account, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + account.getAccountId() + "/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -652,8 +653,8 @@ public class FigoSession extends FigoApi {
      * @param visited
      * 			new value for the visited field
      */
-    public void modifySecurities(String accountId, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/rest/accounts/" + accountId + "/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
+    public FigoRequest modifySecurities(String accountId, FieldVisited visited, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/rest/accounts/" + accountId + "/securities", new VisitedRequest(visited == FieldVisited.VISITED), Request.Method.PUT, null, listener, errorListener);
     }
 
     /**
@@ -663,8 +664,8 @@ public class FigoSession extends FigoApi {
      *            ID of the bank to be retrieved
      * @return Bank or null
      */
-    public void getBank(String bankId, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/banks/" + bankId, null, Request.Method.GET, Bank.class, listener, errorListener);
+    public FigoRequest getBank(String bankId, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/banks/" + bankId, null, Request.Method.GET, Bank.class, listener, errorListener);
     }
 
     /**
@@ -674,8 +675,8 @@ public class FigoSession extends FigoApi {
      *            Account for which to return the Bank
      * @return Bank or Null
      */
-    public void getBank(Account account, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
-        getBank(account.getBankId(), listener, errorListener);
+    public FigoRequest getBank(Account account, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
+        return getBank(account.getBankId(), listener, errorListener);
     }
 
     /**
@@ -685,8 +686,8 @@ public class FigoSession extends FigoApi {
      *            modified bank object to be saved
      * @return Bank object for the updated bank
      */
-    public void updateBank(Bank bank, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/banks/" + bank.getBankId(), bank, Request.Method.PUT, Bank.class, listener, errorListener);
+    public FigoRequest updateBank(Bank bank, Response.Listener<Bank> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/banks/" + bank.getBankId(), bank, Request.Method.PUT, Bank.class, listener, errorListener);
     }
 
     /**
@@ -695,8 +696,8 @@ public class FigoSession extends FigoApi {
      * @param bankId
      *            ID of the bank whose pin should be removed
      */
-    public void removeBankPin(String bankId, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/banks/" + bankId + "/remove_pin", null, Request.Method.POST, null, listener, errorListener);
+    public FigoRequest removeBankPin(String bankId, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/banks/" + bankId + "/remove_pin", null, Request.Method.POST, null, listener, errorListener);
     }
 
     /**
@@ -705,8 +706,8 @@ public class FigoSession extends FigoApi {
      * @param bank
      *            bank whose pin should be removed
      */
-    public void removeBankPin(Bank bank, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        removeBankPin(bank.getBankId(), listener, errorListener);
+    public FigoRequest removeBankPin(Bank bank, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return removeBankPin(bank.getBankId(), listener, errorListener);
     }
 
     /**
@@ -714,7 +715,7 @@ public class FigoSession extends FigoApi {
      *
      * @return List of Notification objects
      */
-    public void getNotifications(final Response.Listener<List<Notification>> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getNotifications(final Response.Listener<List<Notification>> listener, Response.ErrorListener errorListener)  {
         Response.Listener<Notification.NotificationsResponse> wrapperListener = new Response.Listener<Notification.NotificationsResponse>() {
             @Override
             public void onResponse(Notification.NotificationsResponse response) {
@@ -722,7 +723,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/notifications", null, Request.Method.GET, Notification.NotificationsResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/notifications", null, Request.Method.GET, Notification.NotificationsResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -732,8 +733,8 @@ public class FigoSession extends FigoApi {
      *            figo ID for the notification to be retrieved
      * @return Notification or Null
      */
-    public void getNotification(String notificationId, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/notifications/" + notificationId, null, Request.Method.GET, Notification.class, listener, errorListener);
+    public FigoRequest getNotification(String notificationId, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/notifications/" + notificationId, null, Request.Method.GET, Notification.class, listener, errorListener);
     }
 
     /**
@@ -743,8 +744,8 @@ public class FigoSession extends FigoApi {
      *            Notification which should be registered
      * @return the newly registered Notification
      */
-    public void addNotification(Notification notification, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/notifications", notification, Request.Method.POST, Notification.class, listener, errorListener);
+    public FigoRequest addNotification(Notification notification, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/notifications", notification, Request.Method.POST, Notification.class, listener, errorListener);
     }
 
     /**
@@ -753,8 +754,8 @@ public class FigoSession extends FigoApi {
      * @param notification
      *            Notification with updated values
      */
-    public void updateNotification(Notification notification, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/notifications/" + notification.getNotificationId(), notification, Request.Method.PUT, Notification.class, listener, errorListener);
+    public FigoRequest updateNotification(Notification notification, Response.Listener<Notification> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/notifications/" + notification.getNotificationId(), notification, Request.Method.PUT, Notification.class, listener, errorListener);
     }
 
     /**
@@ -763,8 +764,8 @@ public class FigoSession extends FigoApi {
      * @param notification
      *            Notification to be removed
      */
-    public void removeNotification(Notification notification, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
-        this.queryApi("/rest/notifications/" + notification.getNotificationId(), null, Request.Method.DELETE, null, listener, errorListener);
+    public FigoRequest removeNotification(Notification notification, Response.Listener<Void> listener, Response.ErrorListener errorListener)  {
+        return this.queryApi("/rest/notifications/" + notification.getNotificationId(), null, Request.Method.DELETE, null, listener, errorListener);
     }
 
     /**
@@ -772,7 +773,7 @@ public class FigoSession extends FigoApi {
      *
      * @return List of Payments
      */
-    public void getPayments(final Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getPayments(final Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
         Response.Listener<Payment.PaymentsResponse> wrapperListener = new Response.Listener<Payment.PaymentsResponse>() {
             @Override
             public void onResponse(Payment.PaymentsResponse response) {
@@ -780,7 +781,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/payments", null, Request.Method.GET, Payment.PaymentsResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/payments", null, Request.Method.GET, Payment.PaymentsResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -790,7 +791,7 @@ public class FigoSession extends FigoApi {
      *            the ID of the account for which to retrieve the payments
      * @return List of Payments
      */
-    public void getPayments(String accountId, final Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getPayments(String accountId, final Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
         Response.Listener<Payment.PaymentsResponse> wrapperListener = new Response.Listener<Payment.PaymentsResponse>() {
             @Override
             public void onResponse(Payment.PaymentsResponse response) {
@@ -798,7 +799,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/accounts/" + accountId + "/payments", null, Request.Method.GET, Payment.PaymentsResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/accounts/" + accountId + "/payments", null, Request.Method.GET, Payment.PaymentsResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -808,8 +809,8 @@ public class FigoSession extends FigoApi {
      *            the account for which to retrieve the payments
      * @return List of Payments
      */
-    public void getPayments(Account account, Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
-        this.getPayments(account.getAccountId(), listener, errorListener);
+    public FigoRequest getPayments(Account account, Response.Listener<List<Payment>> listener, Response.ErrorListener errorListener)  {
+        return this.getPayments(account.getAccountId(), listener, errorListener);
     }
 
     /**
@@ -821,8 +822,8 @@ public class FigoSession extends FigoApi {
      *            ID of the payment to be retrieved
      * @return Payment or Null
      */
-    public void getPayment(String accountId, String paymentId, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
-        this.queryApi("/rest/accounts/" + accountId + "/payments/" + paymentId, null, Request.Method.GET, Payment.class, listener, errorListener);
+    public FigoRequest getPayment(String accountId, String paymentId, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
+        return this.queryApi("/rest/accounts/" + accountId + "/payments/" + paymentId, null, Request.Method.GET, Payment.class, listener, errorListener);
     }
 
     /**
@@ -834,8 +835,8 @@ public class FigoSession extends FigoApi {
      *            ID of the payment to be retrieved
      * @return Payment or Null
      */
-    public void getPayment(Account account, String paymentId, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
-        this.getPayment(account.getAccountId(), paymentId, listener, errorListener);
+    public FigoRequest getPayment(Account account, String paymentId, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
+        return this.getPayment(account.getAccountId(), paymentId, listener, errorListener);
     }
 
     /**
@@ -845,18 +846,18 @@ public class FigoSession extends FigoApi {
      *            Payment which should be created
      * @return the newly created payment
      */
-    public void addPayment(Payment payment, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
-        this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments", payment, Request.Method.POST, Payment.class, listener, errorListener);
+    public FigoRequest addPayment(Payment payment, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
+        return this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments", payment, Request.Method.POST, Payment.class, listener, errorListener);
     }
 
-    public void addContainerPayment(PaymentContainer container, Response.Listener<PaymentContainer> listener, Response.ErrorListener errorListener) {
-    	this.queryApi("/rest/accounts/" + container.getAccountId() + "/payments", container, Request.Method.POST, PaymentContainer.class, listener, errorListener);
+    public FigoRequest addContainerPayment(PaymentContainer container, Response.Listener<PaymentContainer> listener, Response.ErrorListener errorListener) {
+    	return this.queryApi("/rest/accounts/" + container.getAccountId() + "/payments", container, Request.Method.POST, PaymentContainer.class, listener, errorListener);
     }
 
     /**
      * Returns a list of PaymentProposals.
      */
-    public void getPaymentProposals(final Response.Listener<List<PaymentProposal>> listener, Response.ErrorListener errorListener) {
+    public FigoRequest getPaymentProposals(final Response.Listener<List<PaymentProposal>> listener, Response.ErrorListener errorListener) {
         Response.Listener<PaymentProposalResponse> wrapperListener = new Response.Listener<PaymentProposalResponse>() {
             @Override
             public void onResponse(PaymentProposalResponse response) {
@@ -864,7 +865,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-    	this.queryApi("/rest/adress_book", null, Request.Method.GET, PaymentProposalResponse.class, wrapperListener, errorListener);
+    	return this.queryApi("/rest/adress_book", null, Request.Method.GET, PaymentProposalResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -874,8 +875,8 @@ public class FigoSession extends FigoApi {
      *            Payment with updated values
      * @return updated Payment as returned by the server
      */
-    public void updatePayment(Payment payment, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
-        this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId(), payment, Request.Method.PUT, Payment.class, listener, errorListener);
+    public FigoRequest updatePayment(Payment payment, Response.Listener<Payment> listener, Response.ErrorListener errorListener) {
+        return this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId(), payment, Request.Method.PUT, Payment.class, listener, errorListener);
     }
 
     /**
@@ -884,8 +885,8 @@ public class FigoSession extends FigoApi {
      * @param payment
      *            payment to be removed
      */
-    public void removePayment(Payment payment, Response.Listener<Void> listener, Response.ErrorListener errorListener) {
-        this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId(), null, Request.Method.DELETE, null, listener, errorListener);
+    public FigoRequest removePayment(Payment payment, Response.Listener<Void> listener, Response.ErrorListener errorListener) {
+        return this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId(), null, Request.Method.DELETE, null, listener, errorListener);
     }
 
     /**
@@ -899,8 +900,8 @@ public class FigoSession extends FigoApi {
      *            Any kind of string that will be forwarded in the callback response message
      * @return the URL to be opened by the user for the TAN process
      */
-    public void submitPayment(Payment payment, String tanSchemeId, String state, Response.Listener<String> listener, Response.ErrorListener errorListener)  {
-        submitPayment(payment, tanSchemeId, state, null, listener, errorListener);
+    public FigoRequest submitPayment(Payment payment, String tanSchemeId, String state, Response.Listener<String> listener, Response.ErrorListener errorListener)  {
+        return submitPayment(payment, tanSchemeId, state, null, listener, errorListener);
     }
 
     /**
@@ -916,7 +917,7 @@ public class FigoSession extends FigoApi {
      *            At the end of the submission process a response will be sent to this callback URL
      * @return the URL to be opened by the user for the TAN process
      */
-    public void submitPayment(Payment payment, String tanSchemeId, String state, String redirectUri, final Response.Listener<String> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest submitPayment(Payment payment, String tanSchemeId, String state, String redirectUri, final Response.Listener<String> listener, Response.ErrorListener errorListener)  {
         Response.Listener<TaskTokenResponse> wrapperListener = new Response.Listener<TaskTokenResponse>() {
             @Override
             public void onResponse(TaskTokenResponse response) {
@@ -924,7 +925,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId() + "/submit",
+        return this.queryApi("/rest/accounts/" + payment.getAccountId() + "/payments/" + payment.getPaymentId() + "/submit",
                 new SubmitPaymentRequest(tanSchemeId, state, redirectUri), Request.Method.POST, TaskTokenResponse.class, wrapperListener, errorListener);
     }
 
@@ -939,7 +940,7 @@ public class FigoSession extends FigoApi {
      *            URI the user is redirected to after the process completes
      * @return the URL to be opened by the user
      */
-    public void getSyncURL(String state, String redirect_url, final Response.Listener<String> listener, Response.ErrorListener errorListener)  {
+    public FigoRequest getSyncURL(String state, String redirect_url, final Response.Listener<String> listener, Response.ErrorListener errorListener)  {
         Response.Listener<TaskTokenResponse> wrapperListener = new Response.Listener<TaskTokenResponse>() {
             @Override
             public void onResponse(TaskTokenResponse response) {
@@ -947,7 +948,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/sync", new SyncTokenRequest(state, redirect_url), Request.Method.POST, TaskTokenResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/sync", new SyncTokenRequest(state, redirect_url), Request.Method.POST, TaskTokenResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -963,7 +964,7 @@ public class FigoSession extends FigoApi {
      * 			  Tasks to sync while talking to the bank. Transactions are activated by default
      * @return the URL to be opened by the user
      */
-    public void getSyncURL(String state, String redirect_url, List<String> syncTasks, final Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public FigoRequest getSyncURL(String state, String redirect_url, List<String> syncTasks, final Response.Listener<String> listener, Response.ErrorListener errorListener) {
         Response.Listener<TaskTokenResponse> wrapperListener = new Response.Listener<TaskTokenResponse>() {
             @Override
             public void onResponse(TaskTokenResponse response) {
@@ -971,7 +972,7 @@ public class FigoSession extends FigoApi {
             }
         };
 
-        this.queryApi("/rest/sync", new SyncTokenRequest(state, redirect_url, syncTasks), Request.Method.POST, TaskTokenResponse.class, wrapperListener, errorListener);
+        return this.queryApi("/rest/sync", new SyncTokenRequest(state, redirect_url, syncTasks), Request.Method.POST, TaskTokenResponse.class, wrapperListener, errorListener);
     }
 
     /**
@@ -980,8 +981,8 @@ public class FigoSession extends FigoApi {
      * 			ID of the TaskToken which will be checked
      * @return	A TaskStatusResponse Object with information about the task.
      */
-    public void getTaskState(String tokenId, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/progress?id=" + tokenId, new TaskStatusRequest(tokenId), Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
+    public FigoRequest getTaskState(String tokenId, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/progress?id=" + tokenId, new TaskStatusRequest(tokenId), Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
     }
 
     @Deprecated
@@ -993,11 +994,11 @@ public class FigoSession extends FigoApi {
      * 			PIN which will be submitted
      * @return A TaskStatusResponse Object with information about the task.
      */
-    public void getTaskState(String tokenId, String pin, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/progress?id=" + tokenId, new TaskStatusRequest(tokenId, pin), Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
+    public FigoRequest getTaskState(String tokenId, String pin, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/progress?id=" + tokenId, new TaskStatusRequest(tokenId, pin), Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
     }
 
-    public void submitResponseToTask(String tokenId, String response, TaskResponseType type, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest submitResponseToTask(String tokenId, String response, TaskResponseType type, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
 	/**
 	 * This method is used to provide a response to a running Task.
 	 * @param tokenId
@@ -1025,10 +1026,10 @@ public class FigoSession extends FigoApi {
 		default:
 			break;
 		}
-    	this.queryApi("/task/progress?id=" + tokenId, request, Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
+    	return this.queryApi("/task/progress?id=" + tokenId, request, Request.Method.POST, TaskStatusResponse.class, listener, errorListener);
     }
 
-    public void submitResponseToTask(TaskTokenResponse tokenResponse, String response, TaskResponseType type, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
+    public FigoRequest submitResponseToTask(TaskTokenResponse tokenResponse, String response, TaskResponseType type, Response.Listener<TaskStatusResponse> listener, Response.ErrorListener errorListener) 	{
     	/**
     	 * This method is used to provide a response to a running Task.
     	 * @param tokenResponse
@@ -1039,7 +1040,7 @@ public class FigoSession extends FigoApi {
     	 * 			Type of the response you want to submit. Available types are: PIN, SAVE_PIN, CHALLENGE and CONTINUE
     	 *
     	 */
-    	this.submitResponseToTask(tokenResponse.getTaskToken(), response, type, listener, errorListener);
+    	return this.submitResponseToTask(tokenResponse.getTaskToken(), response, type, listener, errorListener);
     }
 
     /**
@@ -1047,8 +1048,8 @@ public class FigoSession extends FigoApi {
      * @param tokenResponse
      * 				TokenResponse Object
      */
-    public void startTask(TaskTokenResponse tokenResponse, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/start?id=" + tokenResponse.task_token, null, Request.Method.GET, null, listener, errorListener);
+    public FigoRequest startTask(TaskTokenResponse tokenResponse, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/start?id=" + tokenResponse.task_token, null, Request.Method.GET, null, listener, errorListener);
     }
 
     /**
@@ -1056,8 +1057,8 @@ public class FigoSession extends FigoApi {
      * @param taskToken
      * 				Token ID
      */
-    public void startTask(String taskToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/start?id=" + taskToken, null, Request.Method.GET, null, listener, errorListener);
+    public FigoRequest startTask(String taskToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/start?id=" + taskToken, null, Request.Method.GET, null, listener, errorListener);
     }
 
     /**
@@ -1065,8 +1066,8 @@ public class FigoSession extends FigoApi {
      * @param tokenResponse
      * 				Token Response Object
      */
-    public void cancelTask(TaskTokenResponse tokenResponse, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/cancel?id=" + tokenResponse.task_token, null, Request.Method.POST, null, listener, errorListener);
+    public FigoRequest cancelTask(TaskTokenResponse tokenResponse, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/cancel?id=" + tokenResponse.task_token, null, Request.Method.POST, null, listener, errorListener);
     }
 
     /**
@@ -1074,16 +1075,16 @@ public class FigoSession extends FigoApi {
      * @param taskToken
      * 				Token ID
      */
-    public void cancelTask(String taskToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/task/cancel?id=" + taskToken, null, Request.Method.POST, null, listener, errorListener);
+    public FigoRequest cancelTask(String taskToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/task/cancel?id=" + taskToken, null, Request.Method.POST, null, listener, errorListener);
     }
 
-    public void startProcess(ProcessToken processToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/process/start?id=" + processToken.getProcessToken(), null, Request.Method.GET, null, listener, errorListener);
+    public FigoRequest startProcess(ProcessToken processToken, Response.Listener<Void> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/process/start?id=" + processToken.getProcessToken(), null, Request.Method.GET, null, listener, errorListener);
     }
 
-    public void createProcess(BusinessProcess process, Response.Listener<ProcessToken> listener, Response.ErrorListener errorListener) 	{
-    	this.queryApi("/client/process", process, Request.Method.POST, ProcessToken.class, listener, errorListener);
+    public FigoRequest createProcess(BusinessProcess process, Response.Listener<ProcessToken> listener, Response.ErrorListener errorListener) 	{
+    	return this.queryApi("/client/process", process, Request.Method.POST, ProcessToken.class, listener, errorListener);
     }
 
     @Override
